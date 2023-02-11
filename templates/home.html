@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Voice-Enabled Chatbot</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    // Create a global variable to store the audio context
+    var audioContext;
+  
+    // Initialize the audio context when the page loads
+    $(document).ready(function() {
+      window.AudioContext = window.AudioContext || window.webkitAudioContext;
+      audioContext = new AudioContext();
+    });
+  
+    // Function to start recording audio using the microphone
+    function startRecording() {
+      // Get the user's microphone
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(function(stream) {
+          // Create a new audio source from the microphone stream
+          var source = audioContext.createMediaStreamSource(stream);
+  
+          // Send the audio source to a recorder node
+          var recorder = new MediaRecorder(source.stream);
+  
+          // Start recording the audio
+          recorder.start();
+  
+          // Stop recording the audio after 5 seconds
+          setTimeout(function() {
+            recorder.stop();
+          }, 5000);
+  
+          // Handle the recorded audio data
+          recorder.ondataavailable = function(e) {
+            // Convert the recorded audio to a Blob
+            var audioBlob = new Blob([e.data], { type: 'audio/webm' });
+  
+            // Send the recorded audio to the server for transcription
+            sendAudioToServer(audioBlob);
+          };
+        })
+        .catch(function(err) {
+          console.error('Failed to access microphone', err);
+        });
+    }
+  
+    // Function to send the recorded audio to the server for transcription
+    function sendAudioToServer(audioBlob) {
+      // Code to send the recorded audio to the server
+      // ...
+    }
+  </script>
+  
+  <style>
+    .microphone-icon {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Voice-Enabled Chatbot</h1>
+  <p>Click the microphone icon to start recording your voice:</p>
+  <img src="microphone.png" class="microphone-icon" onclick="startRecording()">
+</body>
+</html>
